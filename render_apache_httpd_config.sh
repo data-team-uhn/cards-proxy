@@ -84,6 +84,10 @@ EOF
 	fi
 
 	cat << EOF
+		Header set Cache-Control no-store "expr=(%{REQUEST_URI} == '/fetch_requires_saml_login.html') || (%{REQUEST_URI} == '/goto_saml_login')"
+EOF
+
+	cat << EOF
 		ProxyPass http://localhost:8080/
 		ProxyPassReverse http://localhost:8080/
 	</Location>
