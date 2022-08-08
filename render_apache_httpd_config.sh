@@ -88,8 +88,8 @@ EOF
 EOF
 
 	cat << EOF
-		ProxyPass http://localhost:8080/
-		ProxyPassReverse http://localhost:8080/
+		ProxyPass http://\${CARDS_CONTAINER}:8080/
+		ProxyPassReverse http://\${CARDS_CONTAINER}:8080/
 	</Location>
 
 	<Location "/proxyerror">
@@ -97,8 +97,8 @@ EOF
 	</Location>
 
 	<Location "/goto_saml_login">
-		ProxyPass http://localhost:8080/
-		ProxyPassReverse http://localhost:8080/
+		ProxyPass http://\${CARDS_CONTAINER}:8080/
+		ProxyPassReverse http://\${CARDS_CONTAINER}:8080/
 	</Location>
 
 EOF
@@ -134,8 +134,8 @@ EOF
 	fi
 
 	cat << EOF
-	ProxyPass / http://localhost:8080/
-	ProxyPassReverse / http://localhost:8080/
+	ProxyPass / http://\${CARDS_CONTAINER}:8080/
+	ProxyPassReverse / http://\${CARDS_CONTAINER}:8080/
 EOF
 fi
 
