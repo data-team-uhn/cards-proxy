@@ -1,0 +1,26 @@
+version: '3'
+volumes: {}
+networks:
+  internalnetwork: {}
+services:
+  cardsinitial:
+    environment:
+    - INITIAL_SLING_NODE=true
+    - CARDS_RELOAD=${CARDS_RELOAD:-}
+    - OAK_FILESYSTEM=true
+    image: cards/cards:latest
+    networks:
+      internalnetwork:
+        aliases:
+        - cardsinitial
+  proxy:
+    image: cards/proxy:latest
+    environment:
+    - CARDS_APP_NAME=CARDS
+    - CARDS_CONTAINER=cardsinitial
+    networks:
+      internalnetwork:
+        aliases:
+        - proxy
+    ports:
+    - 8080:80

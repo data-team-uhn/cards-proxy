@@ -1,0 +1,38 @@
+version: '3'
+volumes: {}
+networks:
+  internalnetwork: {}
+services:
+  cardsinitial:
+    environment:
+    - INITIAL_SLING_NODE=true
+    - CARDS_RELOAD=${CARDS_RELOAD:-}
+    - OAK_FILESYSTEM=true
+    - SAML_AUTH_ENABLED=true
+    - ADDITIONAL_SLING_FEATURES=mvn:io.uhndata.cards/cards-keycloakdemo-saml-support/0.9-SNAPSHOT/slingosgifeature
+    image: cards/cards:latest
+    networks:
+      internalnetwork:
+        aliases:
+        - cardsinitial
+  proxy:
+    image: cards/proxy:latest
+    environment:
+    - CARDS_APP_NAME=CARDS
+    - CARDS_CONTAINER=cardsinitial
+    - SAML=true
+    - SAML_IDP_DESTINATION=http://localhost:8484/
+    - CARDS_HOST_AND_PORT=localhost:8080
+    networks:
+      internalnetwork:
+        aliases:
+        - proxy
+    ports:
+    - 8080:80
+  keycloak:
+    image: quay.io/keycloak/keycloak:15.0.2
+    environment:
+    - KEYCLOAK_USER=admin
+    - KEYCLOAK_PASSWORD=admin
+    ports:
+    - 8484:8080
