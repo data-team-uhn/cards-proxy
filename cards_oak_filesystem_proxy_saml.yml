@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cards-app
+  labels:
+    name: cards-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cards-app
+  template:
+    metadata:
+      labels:
+        name: cards-app
+    spec:
+      containers:
+        - name: cards-app
+          image: cards/cards
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+          - name: OAK_FILESYSTEM
+            value: "true"
+          - name: DEV
+            value: "true"
+          - name: ENABLE_TEST_FEATURES
+            value: "true"
+          - name: SAML_AUTH_ENABLED
+            value: "true"
+          - name: ADDITIONAL_SLING_FEATURES
+            value: "mvn:io.uhndata.cards/cards-keycloakdemo-saml-support/0.9-SNAPSHOT/slingosgifeature"
+        - name: reverse-proxy
+          image: cards/proxy
+          imagePullPolicy: Never
+          ports:
+            - name: httpproxy
+              containerPort: 80
+              protocol: TCP
+          env:
+          - name: SAML
+            value: "true"
+          - name: SAML_IDP_DESTINATION
+            value: "http://localhost:8484/"
+          - name: CARDS_HOST_AND_PORT
+            value: "localhost:8080"
+          - name: CARDS_CONTAINER
+            value: "localhost"
+          volumeMounts:
+          - mountPath: /opt/cards/samlKeystore.p12
+            name: saml-keystore
+      volumes:
+      - name: saml-keystore
+        hostPath:
+          path: /home/user/QubesIncoming/Project-CARDS/samlKeystore.p12
+          type: File

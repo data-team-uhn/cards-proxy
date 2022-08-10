@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cards-app
+  labels:
+    name: cards-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cards-app
+  template:
+    metadata:
+      labels:
+        name: cards-app
+    spec:
+      containers:
+        - name: cards-app
+          image: cards/cards
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+          - name: OAK_FILESYSTEM
+            value: "true"
+          - name: DEV
+            value: "true"
+          - name: ENABLE_TEST_FEATURES
+            value: "true"
+        - name: reverse-proxy
+          image: cards/proxy
+          imagePullPolicy: Never
+          ports:
+            - name: httpproxy
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: CARDS_CONTAINER
+              value: "localhost"
